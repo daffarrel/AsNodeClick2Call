@@ -13,7 +13,7 @@ var logger = require('log4js').getLogger('App.main');
 var SECRET_KEY = "dfalkehasdhf2349238dfskhfk2";
 var PORT = 3000;
 server.listen(PORT);
-logger.info("Server started at port " + PORT);
+logger.info("Server started used port " + PORT);
 
 app.use(bodyParser.urlencoded({ extended: false}));
 //app.use(bodyParser.json());
