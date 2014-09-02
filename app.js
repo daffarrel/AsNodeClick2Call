@@ -7,13 +7,13 @@ var bodyParser = require("body-parser");
 var app = express();
 var server = http.createServer(app);
 
+var as_tools = require('./astools.js');
+var logger = require('log4js').getLogger('App.main');
+
 var SECRET_KEY = "dfalkehasdhf2349238dfskhfk2";
-
-// init Asterisk AMI https://github.com/pipobscure/NodeJS-AsteriskManager
-//var ami = new require('asterisk-manager')('5038','localhost','username','password', true);
-
-server.listen(3000);
-console.log("Asterisk Click2call - http://0.0.0.0:3000 - Server Started");
+var PORT = 3000;
+server.listen(PORT);
+logger.info("Server started at port " + PORT);
 
 app.use(bodyParser.urlencoded({ extended: false}));
 //app.use(bodyParser.json());
@@ -50,7 +50,7 @@ app.post('/click2call', function(req, res){
   var tripid = 0;
 
   if (!req.headers.hasOwnProperty("x-api-key") || req.headers["x-api-key"] != SECRET_KEY){
-    res.statusCode = 404;
+    res.statusCode = 403;
     res_message = "You can not access to this area!";
     res_status = "Forbidden";
   }
@@ -71,30 +71,16 @@ app.post('/click2call', function(req, res){
     res_status = "Error";
   }
   else{
-    makeNewCall(req.body, function(){});
+   if ( !as_tools.makeNewCall(req.body) ){
+     res.statusCode = 501;
+     res_message = "Server have some problems and can not handle this call now!";
+     res_status = "Failed";
+     logger.debug("Failed to originate call with AMI");
+    }
   }
 
   res.jsonp(JSON.stringify({ status: res_status, message: res_message }));
   res.end();
 });
 
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var isEmpty = function(obj){
-  if (obj === null) return true;
-
-  if (obj.length > 0) return false;
-  if (obj.length === 0) return true;
-
-  for (var key in obj)	{
-    if (hasOwnPropoerty.call(obj, key)) return false;
-  }
-
-  return true;
-};
-
-var makeNewCall = function(data, callback) {
-  to_number = data["to_number"];
-  connect_extn = data["connect_extn"];
-  record_call = data["record_call"];
-  console.log("New call to " + to_number + " from " + connect_extn + " is_record " + record_call);
-};
+//var hasOwnProperty = Object.prototype.hasOwnProperty;
