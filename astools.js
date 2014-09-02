@@ -1,4 +1,5 @@
 // Using NAMI: https://github.com/marcelog/Nami/
+var namiLib = require("nami");
 
 var namiConfig = {
   host: "localhost",
@@ -8,7 +9,7 @@ var namiConfig = {
 };
 
 var logger = require('log4js').getLogger('App.astools');
-var nami = new (require("nami").Nami)(namiConfig);
+var nami = new namiLib.Nami(namiConfig);
 var amiConnected = false;
 /*
 nami.on('namiEvent', function (event) { });
@@ -45,21 +46,21 @@ function asCallOriginate(data) {
   var record_call = data["record_call"];
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
-  var action = new namiLib.Actions.Status();
+  var action = new namiLib.Actions.Originate();
+  action.channel = 'SIP/' + to_number;
+  action.context = "click2call";
+  action.exten = connect_extn;
   action.variables = {
-    'action': 'originate',
-    'channel':'SIP/' + to_number,
-    'context':'click2call',
-    'exten': connect_extn,
-    'priority':1,
-    'variables':{
-      'call_record':record_call,
-      'message':'',
-      'tripid':0
-    }
+    'call_record':record_call,
+    'message':'',
+    'tripid':0
   };
-  nami.send(action, function(response) {
-    logger.debug("Call originated: " + response);
+  standardSend(action);
+}
+
+function standardSend(action) {
+  nami.send(action, function (response) {
+    logger.debug(' ---- Response: ' + util.inspect(response));
   });
 }
 
