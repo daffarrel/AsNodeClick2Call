@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/vietha/AsNodeClick2Call",
   "dependencies": {
+    "asterisk-manager": "^0.1.12",
+    "body-parser": "^1.6.7",
     "express": "^4.8.7"
   }
 }
