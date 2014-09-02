@@ -53,9 +53,9 @@ function asCallOriginate(data) {
   action.Priority = 1;
   action.CallerID = "MoveIVR Caller";
   action.variables = {
-    'call_record':record_call,
-    'message':'',
-    'tripid':0
+    'CALL-RECORD':record_call,
+    'MESSAGE':'',
+    'TRIPID':0
   };
   standardSend(action);
 }
