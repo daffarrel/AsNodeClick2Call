@@ -1,10 +1,10 @@
 // Using NAMI: https://github.com/marcelog/Nami/
 
 var namiConfig = {
-  host: "amihost",
+  host: "localhost",
   port: 5038,
   username: "admin",
-  secret: "secret"
+  secret: "secret5"
 };
 
 var logger = require('log4js').getLogger('App.astools');
@@ -21,9 +21,9 @@ process.on('SIGINT', function () {
 });
 */
 nami.on('namiConnected', function (event) {
-  nami.send(new namiLib.Actions.CoreShowChannelsAction(), function(response){
-    logger.debug(' ---- Response: ' + util.inspect(response));
-  });
+  //nami.send(new namiLib.Actions.CoreShowChannelsAction(), function(response){
+  //  logger.debug(' ---- Response: ' + util.inspect(response));
+  //});
   amiConnected = true;
 });
 nami.open();
