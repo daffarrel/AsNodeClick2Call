@@ -47,9 +47,10 @@ function asCallOriginate(data) {
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
   var action = new namiLib.Actions.Originate();
-  action.channel = 'SIP/' + to_number;
-  action.context = "click2call";
-  action.exten = connect_extn;
+  action.Channel = 'SIP/' + to_number;
+  action.Context = "click2call";
+  action.Exten = connect_extn;
+  action.Priority = 1;
   action.variables = {
     'call_record':record_call,
     'message':'',
