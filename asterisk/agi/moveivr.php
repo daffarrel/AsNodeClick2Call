@@ -87,6 +87,35 @@ function getTripReviewList($ast){
     //print_r($responseData->result[0]->Tripid);
     $totalTrip = count($responseData->result);
 
+    // Response to the caller: You have a trip going from < Pickup_Address > to < Dropoff_Address > 
+    // on <Travel_Date> provided by <Vendor>.  <Vendor> will pick you at < PickupTime> for you appointment at <DropoffTime>
+    $ast->exec("Festival","You have $totalTrip trip to review.");
+    $count_trip = 0;
+    
+    foreach ($responseData->result as $trip) {
+    	$count_trip++;
+    	$tripId = $trip->Tripid;
+    	$Pickup_Address = $trip->Pickup_Address;
+    	$Dropoff_Address = $trip->Dropoff_Address;
+    	$Travel_Date = $trip->Travel_Date;
+    	$Vendor = $trip->Vendor;
+    	$PickupTime = $trip->PickupTime;
+    	$DropOffTime = $trip->DropOffTime;
+
+    	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on ";
+    	$text2 = " provided by $Vendor.  $Vendor will pick you at $PickupTime  for you appointment at $DropOffTime";
+
+ 		$order   = array(",", ";");
+		$replace = '';
+		$text = str_replace($order, $replace, $text); 
+		$text2 = str_replace($order, $replace, $text2); 
+
+		$ast->exec("Festival", $text);
+		$timestamp = strtotime("$Travel_Date");
+		$ast->say_date($timestamp);
+    	$ast->exec("Festival", $text2);
+    }
+    
 	if (DEBUG)
 		$ast->verbose("getTripReviewList() Stopped with $totalTrip trips to review.");
 }

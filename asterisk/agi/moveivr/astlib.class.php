@@ -192,6 +192,12 @@ class AGI {
 		return $this->ret_char();
 	}
 
+	// Ha Truong for say date
+	public function say_date($date, $digits) {
+		$this->cmd("SAY DATE $date \"$digits\"\n");
+		return $this->ret_char();
+	}
+
 	public function set_context($cxt) {
 		$this->cmd("SET CONTEXT \"$cxt\"\n");
 		return $this->ret_code();
