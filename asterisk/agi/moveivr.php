@@ -23,7 +23,11 @@ define("CARPOOL_RENEWAL_LIST_URL", "http://ivr.movetma.com/Movetivrapi/V1/GetCar
 define("CARPOOL_RENEWAL_URL", "http://ivr.movetma.com/Movetivrapi/V1/SetCarpoolRenewal");
 define("WHERE_IS_MY_RIDE_URL", "http://ivr.movetma.com/Movetivrapi/V1/GetWhereisMyRide");
 
-
+// convert text to speech 
+function text2speech($filename, $text) {
+	$cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
+	exec($cmd);
+}
 
 // excu API GET request to server and parse JSON data response
 function getAPICaller($ast, $url) {
@@ -134,9 +138,105 @@ function getTripCancelList($ast){
 
     //print_r($responseData->result[0]->Tripid);
     $totalTrip = count($responseData->result);
+    $callUID = $ast->get_variable("UNIQUEID");
+
+    $count_trip = 0; 
+    $trip_list_text = "";
+    foreach ($responseData->result as $trip) {
+    	// Response to the user: Press (n) to cancel trip going from < Pickup_Address > to < Dropoff_Address> 
+		// on <Travel_Date> provided by <vendor> at < PickupTime>.
+		$count_trip++;
+    	$tripId = $trip->Tripid;
+    	$Pickup_Address = $trip->Pickup_Address;
+    	$Dropoff_Address = $trip->Dropoff_Address;
+    	$Travel_Date = $trip->Travel_Date;
+    	$Vendor = $trip->Vendor;
+    	$PickupTime = $trip->PickupTime;
+
+    	$text = "Press $count_trip to cancel trip going from $Pickup_Address to $Dropoff_Address on "
+    			. "$Travel_Date provided by $Vendor at $PickupTime.";
+    	
+    	$trip_list_text = $trip_list_text . $text;
+    	/*
+    	$text2 = "provided by $Vendor at $PickupTime.";
+    	$order   = array(",", ";");
+		$replace = '';
+		$text = str_replace($order, $replace, $text); 
+		$text2 = str_replace($order, $replace, $text2); 
+		$ast->exec("Festival", $text);
+		$timestamp = strtotime("$Travel_Date");
+		$ast->say_date($timestamp);
+    	$ast->exec("Festival", $text2);
+    	*/
+
+    	// store TRIPTID so we can use it later
+    	$ast->set_variable("TRIP".$count_trip,$tripId);
+    }
+	$triplist_filename = "TripCancelList-" . $callUID;
+    text2speech($triplist_filename, $trip_list_text);
+    $ast->set_variable("TRIP-CANCEL-LIST-AUDIO", "$triplist_filename");
+
+	// Would you like to hear this again? 
+	// Press (n+1) for yes 
+	// Press (n+2) for no 
+    $yes_key = $totalTrip + 1;
+    $no_key = $totalTrip + 2;
+    $confirm_text = "Would you like to hear this again? Press $yes_key for yes.  Press $no_key for no ";
+    $filename = "TripCancelList-HearAgain-" . $callUID;
+    text2speech($filename, $confirm_text);
+    $ast->set_variable("CANCEL-LIST-AGAIN-AUDIO", "$filename");
+    // set total trips value to keep track
+    $ast->set_variable("TOTAL-TRIP", "$totalTrip");
 
 	if (DEBUG)
 		$ast->verbose("getTripCancelList() Stopped with $totalTrip trips.");
+}
+
+// cancel trip confirm
+function cancelTripConfirm($ast){
+	if (DEBUG)
+		$ast->verbose("cancelTripConfirm() Start");
+
+  	$userChoice = $ast->get_variable("USERCHOICE");
+  	$tripCancelID = $ast->get_variable("TRIP".$userChoice);
+
+  	$authPhone = $ast->get_variable("AUTH-PHONE");
+  	$authPin = $ast->get_variable("AUTH-PIN");
+  	$calleridNum = $ast->get_variable("CALLERID(num)");
+  	$requestUrl = CANCEL_TRIP_LIST_URL . "?phone=$authPhone&code=$authPin&callerid=$calleridNum";
+    $responseData = getAPICaller($ast, $requestUrl);
+    $totalTrip = count($responseData->result);
+    $callUID = $ast->get_variable("UNIQUEID");
+
+    $count_trip = 0;
+    $trip_cancel_text = "";
+    foreach ($responseData->result as $trip) {
+    	$count_trip++;
+    	$tripId = $trip->Tripid;
+    	// this is trip user selected to cancel
+    	if ($tripId == $tripCancelID) {
+	    	$Pickup_Address = $trip->Pickup_Address;
+	    	$Dropoff_Address = $trip->Dropoff_Address;
+	    	$Travel_Date = $trip->Travel_Date;
+	    	$Vendor = $trip->Vendor;
+	    	$PickupTime = $trip->PickupTime;
+
+	    	// You have selected to cancel the trip going from from < Pickup_Address > to < Dropoff_Address> 
+	    	// on <Travel_Date> at  <PickupTime>. Is this the correct trip?
+			// Press 1 for yes
+			// Press 2 for no
+			$trip_cancel_text = "You have selected to cancel the trip going from $Pickup_Address to $Dropoff_Address on"
+								." $Travel_Date at $PickupTime. Is this the correct trip? Press 1 for yes. Press 2 for no.";
+			$filename = "TripCancelConfirm-$tripId-" . $callUID;
+    		text2speech($filename, $trip_cancel_text);
+    		$ast->set_variable("TRIP-CANCEL-CONFIRM", "$filename");
+    		$ast->set_variable("CANCELTRIPID", "$tripCancelID");
+    		break;
+    	}
+    }
+
+	if (DEBUG)
+		$ast->verbose("cancelTripConfirm() done.");
 }
 
 // cancel trips
@@ -148,12 +248,23 @@ function cancelTrips($ast){
   	$authPin = $ast->get_variable("AUTH-PIN");
   	$calleridNum = $ast->get_variable("CALLERID(num)");
 
+  	$tripID = $ast->get_variable("CANCELTRIPID");
   	// two more fields required for this request (now is just test data)
-  	$tripIDList="T12345,T12346";
+  	$tripIDList="".$tripID.",";
   	$token="Movet_241";
 
   	$requestUrl = CANCEL_TRIP_URL . "?phone=$authPhone&code=$authPin&callerid=$calleridNum&tripidlist=$tripIDList&token=$token";
     $responseData = getAPICaller($ast, $requestUrl);
+
+    $status = $responseData->status;
+
+    // check if request success to server
+    if ($status == "OK"){
+
+    }
+    else {
+    	$ast->exec("Festival", "Something wrong with your request, please come back later.");
+    }
 
 	if (DEBUG)
 		$ast->verbose("cancelTrips() done.");
@@ -240,6 +351,9 @@ function Main($ast, $db, $argv){
 			break;
 		case "GET-TRIP-CANCEL-LIST":
 		  	getTripCancelList($ast);
+			break;
+		case "CANCEL-TRIP-CONFIRM":
+		  	cancelTripConfirm($ast);
 			break;
 		case "CANCEL-TRIPS":
 		  	cancelTrips($ast);
