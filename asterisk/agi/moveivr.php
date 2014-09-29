@@ -86,7 +86,7 @@ function getTripReviewList($ast){
   $responseData = getAPICaller($ast, $requestUrl);
 
   $totalTrip = count($responseData->result);
-
+  $ast->set_variable("TOTAL-REVIEW-TRIP", "$totalTrip");
   // Response to the caller: You have a trip going from < Pickup_Address > to < Dropoff_Address > 
   // on <Travel_Date> provided by <Vendor>.  <Vendor> will pick you at < PickupTime> for you appointment at <DropoffTime>
   //$ast->exec("Festival","You have $totalTrip trip to review.");
@@ -120,6 +120,9 @@ function getTripReviewList($ast){
     */
     $trip_list_text = $trip_list_text . $text;
   }
+
+  if ($totalTrip == 0)
+    $trip_list_text = "You have no trip to review at this time!";
 
   $filename = "TripReviewList-" . $callUID;
   text2speech($filename, $trip_list_text);
@@ -167,6 +170,9 @@ function getTripCancelList($ast){
   	$ast->set_variable("TRIP".$count_trip,$tripId);
   }
 
+  if ($totalTrip == 0)
+    $trip_list_text = "You have no trip at this time!";
+
   $triplist_filename = "TripCancelList-" . $callUID;
   text2speech($triplist_filename, $trip_list_text);
   $ast->set_variable("TRIP-CANCEL-LIST-AUDIO", "$triplist_filename");
@@ -179,7 +185,7 @@ function getTripCancelList($ast){
   text2speech($filename, $confirm_text);
   $ast->set_variable("CANCEL-LIST-AGAIN-AUDIO", "$filename");
   // et total trips value to keep track
-  $ast->set_variable("TOTAL-TRIP", "$totalTrip");
+  $ast->set_variable("TOTAL-CANCEL-TRIP", "$totalTrip");
 
 	if (DEBUG)
 		$ast->verbose("getTripCancelList() Stopped with $totalTrip trips.");
