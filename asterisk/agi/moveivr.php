@@ -471,7 +471,7 @@ function whereIsMyRide($ast){
 
 // prepare MOH class for channel
 // values list: DIALOPTIONS TO-NUMBER CONNECT-EXT MESSAGE TRIPID
-function click2callMOH($ast){
+function click2callMOH($ast, $db){
   if (DEBUG)
     $ast->verbose("click2callMOH() Start");
 
@@ -482,7 +482,7 @@ function click2callMOH($ast){
 
   if (strlen($message)>0){
     $filename = "click2call_moh_$toNumber_$callUID";
-    mohSetup($filename, $message);
+    mohSetup($ast, $db, $filename, $message);
     $dialOptions += "m";
     $ast->set_variable("DIALOPTIONS", $dialOptions);
     $ast->set_variable("CHANNEL(musicclass)", $filename);
@@ -542,7 +542,7 @@ function Main($ast, $db, $argv){
 		  whereIsMyRide($ast);
 			break;
     case "CLICK2CALL-MOH":
-      click2callMOH($ast);
+      click2callMOH($ast, $db);
       break;
     case "CLICK2CALL-CDR":
       click2callCDR($ast);
