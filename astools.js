@@ -4,9 +4,13 @@ var namiLib = require("nami");
 var namiConfig = {
   host: "localhost",
   port: 5038,
-  username: "admin",
-  secret: "secret5"
+  //username: "admin",
+  //secret: "secret5"
+  username: "local_mgr",
+  secret: "RpfpkKOYLilLwUSAqgSz"
 };
+
+var SIPPROVIDER = "FonalityVoIP";
 
 var logger = require('log4js').getLogger('App.astools');
 var nami = new namiLib.Nami(namiConfig);
@@ -47,11 +51,11 @@ function asCallOriginate(data) {
   var message = data["message"];
   var tripid = data["tripid"];
 
-  message = message.replace(new RegExp(',', 'g'), ' ');;
+  message = message.replace(new RegExp(',', 'g'), ' ');
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
   var action = new namiLib.Actions.Originate();
-  action.Channel = 'SIP/' + to_number;
+  action.Channel = 'SIP/' + to_number + "@" + SIPPROVIDER;
   action.Context = "moveivr-click2call";
   action.Exten = connect_extn;
   action.Priority = 1;
