@@ -47,8 +47,7 @@ function asCallOriginate(data) {
   var message = data["message"];
   var tripid = data["tripid"];
 
-  message = message.replace(new RegExp(',', 'g'), '');;
-
+  message = message.replace(new RegExp(',', 'g'), ' ');;
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
   var action = new namiLib.Actions.Originate();
