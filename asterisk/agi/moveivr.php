@@ -23,10 +23,32 @@ define("CARPOOL_RENEWAL_LIST_URL", "http://ivr.movetma.com/Movetivrapi/V1/GetCar
 define("CARPOOL_RENEWAL_URL", "http://ivr.movetma.com/Movetivrapi/V1/SetCarpoolRenewal");
 define("WHERE_IS_MY_RIDE_URL", "http://ivr.movetma.com/Movetivrapi/V1/GetWhereisMyRide");
 
+function newMOHClass($ast, $db, $class, $folder)
+{
+  // insert item to moh db table with format like
+  // [default]
+  // mode=files
+  // directory=moh
+  $cmd = "INSERT INTO musiconhold (name, directory, mode) VALUES ('".$class."','".$folder."','files')";
+  if (DEBUG){ 
+    $ast->verbose("newMOHClass querycmd: $cmd");
+  } 
+  $db->runQuery($cmd);
+}
+
 // convert text to speech 
 function text2speech($filename, $text) {
 	$cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
 	exec($cmd);
+}
+
+// setup moh for current channel
+function mohSetup($ast, $db, $filename, $text) {
+  $folder = "/tmp/$filename";
+  exec("mkdir $folder");
+  $cmd = "/usr/local/bin/swift  -o $folder/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
+  exec($cmd);
+  newMOHClass($ast, $db, $filename, $folder);
 }
 
 // excu API GET request to server and parse JSON data response
@@ -447,6 +469,39 @@ function whereIsMyRide($ast){
 }
 
 
+// prepare MOH class for channel
+// values list: DIALOPTIONS TO-NUMBER CONNECT-EXT MESSAGE TRIPID
+function click2callMOH($ast){
+  if (DEBUG)
+    $ast->verbose("click2callMOH() Start");
+
+  $callUID = $ast->get_variable("UNIQUEID");
+  $message = $ast->get_variable("MESSAGE");
+  $dialOptions = $ast->get_variable("DIALOPTIONS");
+  $toNumber = $ast->get_variable("TO-NUMBER");
+
+  if (strlen($message)>0){
+    $filename = "click2call_moh_$toNumber_$callUID";
+    mohSetup($filename, $message);
+    $dialOptions += "m";
+    $ast->set_variable("DIALOPTIONS", $dialOptions);
+    $ast->set_variable("CHANNEL(musicclass)", $filename);
+  }
+
+  if (DEBUG)
+    $ast->verbose("click2callMOH() Stopped");
+}
+
+// save CDR for click2call
+function click2callCDR($ast){
+  if (DEBUG)
+    $ast->verbose("click2callMOH() Start");
+
+
+  if (DEBUG)
+    $ast->verbose("click2callMOH() Stopped");
+}
+
 /*----------------------------------------------------------
 	MOVEIVR main processing
 ----------------------------------------------------------*/
@@ -484,8 +539,14 @@ function Main($ast, $db, $argv){
       carpoolRenewalConfirm($ast);
       break;
 		case "WHERE-IS-MY-RIDE":
-		  	whereIsMyRide($ast);
+		  whereIsMyRide($ast);
 			break;
+    case "CLICK2CALL-MOH":
+      click2callMOH($ast);
+      break;
+    case "CLICK2CALL-CDR":
+      click2callCDR($ast);
+      break;
 		default:
 			break;
 	}
