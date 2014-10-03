@@ -44,18 +44,23 @@ function asCallOriginate(data) {
   var to_number = data["to_number"];
   var connect_extn = data["connect_extn"];
   var record_call = data["record_call"];
+  var message = data["message"];
+  var tripid = data["tripid"];
+
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
   var action = new namiLib.Actions.Originate();
   action.Channel = 'SIP/' + to_number;
-  action.Context = "click2call";
+  action.Context = "moveivr-click2call";
   action.Exten = connect_extn;
   action.Priority = 1;
   action.CallerID = "MoveIVR Caller";
   action.variables = {
+    'TO-NUMBER': to_number,
+    'CONNECT-EXT': connect_extn ,
     'CALL-RECORD':record_call,
-    'MESSAGE':'',
-    'TRIPID':0
+    'MESSAGE': filename,
+    'TRIPID': tripid
   };
   standardSend(action);
 }
