@@ -483,9 +483,9 @@ function click2callMOH($ast, $db){
   if (strlen($message)>0){
     $filename = "click2call_moh_$toNumber_$callUID";
     mohSetup($ast, $db, $filename, $message);
-    $dialOptions += "m";
-    $ast->set_variable("DIALOPTIONS", $dialOptions);
-    $ast->set_variable("CHANNEL(musicclass)", $filename);
+    $dialOptions .= "m";
+    $ast->set_variable("DIALOPTIONS", "$dialOptions");
+    $ast->set_variable("CHANNEL(musicclass)", "$filename");
   }
 
   if (DEBUG)
