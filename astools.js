@@ -59,7 +59,7 @@ function asCallOriginate(data) {
     'TO-NUMBER': to_number,
     'CONNECT-EXT': connect_extn ,
     'CALL-RECORD':record_call,
-    'MESSAGE': filename,
+    'MESSAGE': message,
     'TRIPID': tripid
   };
   standardSend(action);
