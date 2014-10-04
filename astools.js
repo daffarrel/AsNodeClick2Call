@@ -4,10 +4,10 @@ var namiLib = require("nami");
 var namiConfig = {
   host: "localhost",
   port: 5038,
-  //username: "admin",
-  //secret: "secret5"
-  username: "local_mgr",
-  secret: "RpfpkKOYLilLwUSAqgSz"
+  username: "admin",
+  secret: "secret5"
+  //username: "local_mgr",
+  //secret: "RpfpkKOYLilLwUSAqgSz"
 };
 
 var SIPPROVIDER = "FonalityVoIP";
@@ -33,6 +33,44 @@ nami.on('namiConnected', function (event) {
 });
 nami.open();
 
+// reload asterisk server to apply new config
+function reloadAS() {
+  var cmd = "asterisk -rx 'moh reload'";
+  child_process.exec(cmd, function (err, data) {
+    logger.info("reloadAS result: " + data);
+  });
+}
+
+// create new class for MOH
+function newMOHClass(folder, filename) {
+  var mode = "files";
+  var fs = require('fs');
+  var stream = fs.createWriteStream("moveivr_moh.conf");
+  stream.once('open', function(fd) {
+    stream.write("[" + filename + "]\n");
+    stream.write("mode=" + mode + "\n");
+    stream.write("directory=" + folder + "\n");
+    stream.end();
+  });
+}
+
+// convert text to speech 
+function text2speech(filepath, text) {
+  var cmd = "/usr/local/bin/swift  -o " + filepath + " -p audio/channels=1,audio/sampling-rate=8000 '" + text + "'";
+  child_process.exec(cmd, function (err, data) {
+    logger.info("text2speech result: " + data);
+  });
+}
+
+// setup moh for current channel
+function mohSetup(filename, text) {
+  var folder = "/tmp/" + filename;
+  var filepath = folder + "/" + filename + ".wav";
+  text2speech(filepath, text);
+  newMOHClass(folder, filename);
+  reloadAS();
+}
+
 /*
  'action':'originate',
  'channel':'SIP/myphone',
@@ -50,8 +88,16 @@ function asCallOriginate(data) {
   var record_call = data["record_call"];
   var message = data["message"];
   var tripid = data["tripid"];
+  var calloptions = "g";
+  var filename = '';
 
-  message = message.replace(new RegExp(',', 'g'), ' ');
+  if (message.length > 0) {
+    message = message.replace(new RegExp(',', 'g'), ' ');
+    var unix = Math.round(+new Date()/1000);
+    filename = to_number + "_" + connect_extn + "_" + unix;
+    calloptions += "m";
+  }
+
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
 
   var action = new namiLib.Actions.Originate();
@@ -64,10 +110,11 @@ function asCallOriginate(data) {
     'TO-NUMBER': to_number,
     'CONNECT-EXT': connect_extn ,
     'CALL-RECORD':record_call,
-    'MESSAGE': message,
+    'MOH-CUSTOM': filename,
+    'CALL-OPTIONS': calloptions,
     'TRIPID': tripid
   };
-  standardSend(action);
+  //standardSend(action);
 }
 
 function standardSend(action) {
