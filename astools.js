@@ -72,6 +72,7 @@ function text2speech(filepath, text) {
   logger.info("text2speech cmd: " + cmd)
   child_process.exec(cmd, function (err, data) {
     logger.info("text2speech done");
+    reloadAS();
   });
 }
 
@@ -84,7 +85,6 @@ function mohSetup(filename, text) {
   var filepath = folder + "/" + filename + ".wav";
   text2speech(filepath, text);
   newMOHClass(folder, filename);
-  
 }
 
 /*
