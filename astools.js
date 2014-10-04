@@ -54,10 +54,12 @@ function newMOHClass(folder, filename) {
 
   if (fs.existsSync(filepath)) { 
     fs.appendFile(filepath, data + "\n", function (err) {
+      reloadAS();
     });
   }
   else {
     fs.writeFile(filepath, data + "\n", function (err) {
+      reloadAS();
     }); 
   } 
 
@@ -82,7 +84,7 @@ function mohSetup(filename, text) {
   var filepath = folder + "/" + filename + ".wav";
   text2speech(filepath, text);
   newMOHClass(folder, filename);
-  reloadAS();
+  
 }
 
 /*
