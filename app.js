@@ -55,7 +55,7 @@ app.post('/click2call', function(req, res){
     res_status = "Forbidden";
   }
 
-  if (!req.body.hasOwnProperty("to_number")) {
+  else if (!req.body.hasOwnProperty("to_number")) {
     res.statusCode = 400;
     res_message = "to_number is required!";
     res_status = "Error";

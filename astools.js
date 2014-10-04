@@ -97,6 +97,9 @@ function mohSetup(filename, text) {
    'name1':'value1',
    'name2':'value2'
  }
+  
+TEST: curl -d "to_number=84979820611&connect_extn=84987332282&record_call=N&message=how are you today&tripid=10" http://216.14.95.50:3000/click2call
+curl -d "to_number=84979820611&connect_extn=84987332282&record_call=N&message=how are you today&tripid=10" http://65.60.43.99:3000/click2call
 */
 function asCallOriginate(data) {
   var to_number = data["to_number"];
