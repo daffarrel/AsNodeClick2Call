@@ -51,29 +51,18 @@ function newMOHClass(folder, filename) {
   var fs = require('fs');
   var path = require('path'); 
   var filepath = "/tmp/test";
+  var data = "[" + filename + "]\n" + "mode=" + mode + "\n" + "directory=" + folder + "\n";
 
   if (path.existsSync(filepath)) { 
-    fs.writeFile(filepath, "Hey there!", function (err) {
-      if(err) {
-        console.log(err);
-      } else {
-        console.log("The file was saved!");
-      }
-    }); 
+    fs.appendFile(filepath, data + "\n", function (err) {
+    });
   }
   else {
-    fs.appendFile(filepath, 'data to append\n', function (err) {
-    });
+    fs.writeFile(filepath, data + "\n", function (err) {
+    }); 
   } 
-  /*
-  var stream = fs.createWriteStream("moveivr_moh.conf");
-  stream.once('open', function(fd) {
-    stream.write("[" + filename + "]\n");
-    stream.write("mode=" + mode + "\n");
-    stream.write("directory=" + folder + "\n");
-    stream.end();
-  });
-  */
+  
+  logger.info("newMOHClass done, data added");
 }
 
 // convert text to speech 
