@@ -49,11 +49,10 @@ function reloadAS() {
 function newMOHClass(folder, filename) {
   var mode = "files";
   var fs = require('fs');
-  var path = require('path');
   var filepath = "./asterisk/config/moveivr_click2call_moh.conf";
   var data = "[" + filename + "]\n" + "mode=" + mode + "\n" + "directory=" + folder + "\n";
 
-  if (path.existsSync(filepath)) { 
+  if (fs.existsSync(filepath)) { 
     fs.appendFile(filepath, data + "\n", function (err) {
     });
   }
@@ -68,14 +67,18 @@ function newMOHClass(folder, filename) {
 // convert text to speech 
 function text2speech(filepath, text) {
   var cmd = "/usr/local/bin/swift  -o " + filepath + " -p audio/channels=1,audio/sampling-rate=8000 '" + text + "'";
+  logger.info("text2speech cmd: " + cmd)
   child_process.exec(cmd, function (err, data) {
-    logger.info("text2speech result: " + data);
+    logger.info("text2speech done");
   });
 }
 
 // setup moh for current channel
 function mohSetup(filename, text) {
   var folder = "/tmp/" + filename;
+  var cmd = "mkdir " + folder;
+  child_process.exec(cmd, function (err, data) {
+  });
   var filepath = folder + "/" + filename + ".wav";
   text2speech(filepath, text);
   newMOHClass(folder, filename);
