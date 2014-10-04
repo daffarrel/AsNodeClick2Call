@@ -92,9 +92,10 @@ function asCallOriginate(data) {
   var filename = '';
 
   if (message.length > 0) {
-    message = message.replace(new RegExp(',', 'g'), ' ');
+    //message = message.replace(new RegExp(',', 'g'), ' ');
     var unix = Math.round(+new Date()/1000);
     filename = to_number + "_" + connect_extn + "_" + unix;
+    mohSetup(filename, message);
     calloptions += "m";
   }
 
