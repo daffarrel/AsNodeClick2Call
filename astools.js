@@ -49,8 +49,8 @@ function reloadAS() {
 function newMOHClass(folder, filename) {
   var mode = "files";
   var fs = require('fs');
-  var path = require('path'); 
-  var filepath = "/tmp/test";
+  var path = require('path');
+  var filepath = "./asterisk/config/moveivr_click2call_moh.conf";
   var data = "[" + filename + "]\n" + "mode=" + mode + "\n" + "directory=" + folder + "\n";
 
   if (path.existsSync(filepath)) { 
@@ -61,7 +61,7 @@ function newMOHClass(folder, filename) {
     fs.writeFile(filepath, data + "\n", function (err) {
     }); 
   } 
-  
+
   logger.info("newMOHClass done, data added");
 }
 
