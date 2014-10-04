@@ -38,7 +38,10 @@ nami.open();
 function reloadAS() {
   var cmd = "asterisk -rx 'moh reload'";
   child_process.exec(cmd, function (err, data) {
-    logger.info("reloadAS result: " + data);
+    if (err)
+      logger.info("reload AS MOH failed!");
+    else
+      logger.info("reload AS MOH successed!");
   });
 }
 
@@ -46,6 +49,7 @@ function reloadAS() {
 function newMOHClass(folder, filename) {
   var mode = "files";
   var fs = require('fs');
+  /*
   var stream = fs.createWriteStream("moveivr_moh.conf");
   stream.once('open', function(fd) {
     stream.write("[" + filename + "]\n");
@@ -53,6 +57,14 @@ function newMOHClass(folder, filename) {
     stream.write("directory=" + folder + "\n");
     stream.end();
   });
+  */
+  fs.writeFile("/tmp/test", "Hey there!", function(err) {
+      if(err) {
+          console.log(err);
+      } else {
+          console.log("The file was saved!");
+      }
+  }); 
 }
 
 // convert text to speech 
