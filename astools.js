@@ -1,5 +1,6 @@
 // Using NAMI: https://github.com/marcelog/Nami/
 var namiLib = require("nami");
+var child_process = require('child_process');
 
 var namiConfig = {
   host: "localhost",
