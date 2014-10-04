@@ -5,10 +5,10 @@ var child_process = require('child_process');
 var namiConfig = {
   host: "localhost",
   port: 5038,
-  username: "admin",
-  secret: "secret5"
-  //username: "local_mgr",
-  //secret: "RpfpkKOYLilLwUSAqgSz"
+  //username: "admin",
+  //secret: "secret5"
+  username: "local_mgr",
+  secret: "RpfpkKOYLilLwUSAqgSz"
 };
 
 var SIPPROVIDER = "FonalityVoIP";
@@ -127,11 +127,11 @@ function asCallOriginate(data) {
     'TO-NUMBER': to_number,
     'CONNECT-EXT': connect_extn ,
     'CALL-RECORD':record_call,
-    'MOH-CUSTOM': filename,
-    'CALL-OPTIONS': calloptions,
+    'MOHCUSTOM': filename,
+    'DIALOPTIONS': calloptions,
     'TRIPID': tripid
   };
-  //standardSend(action);
+  standardSend(action);
 }
 
 function standardSend(action) {
