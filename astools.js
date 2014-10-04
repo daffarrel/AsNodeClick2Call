@@ -49,6 +49,22 @@ function reloadAS() {
 function newMOHClass(folder, filename) {
   var mode = "files";
   var fs = require('fs');
+  var path = require('path'); 
+  var filepath = "/tmp/test";
+
+  if (path.existsSync(filepath)) { 
+    fs.writeFile(filepath, "Hey there!", function (err) {
+      if(err) {
+        console.log(err);
+      } else {
+        console.log("The file was saved!");
+      }
+    }); 
+  }
+  else {
+    fs.appendFile(filepath, 'data to append\n', function (err) {
+    });
+  } 
   /*
   var stream = fs.createWriteStream("moveivr_moh.conf");
   stream.once('open', function(fd) {
@@ -58,13 +74,6 @@ function newMOHClass(folder, filename) {
     stream.end();
   });
   */
-  fs.writeFile("/tmp/test", "Hey there!", function(err) {
-      if(err) {
-          console.log(err);
-      } else {
-          console.log("The file was saved!");
-      }
-  }); 
 }
 
 // convert text to speech 
