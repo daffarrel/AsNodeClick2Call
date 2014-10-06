@@ -75,21 +75,23 @@ app.post('/click2call', function(req, res){
   }
   else{
     record_call = req.body["record_call"];
-    if ( !as_tools.makeNewCall(req.body) ){
+
+    if (record_call == 'Y') {
+      to_number = req.body["to_number"];
+      connect_extn = req.body["connect_extn"];
+      var unix = Math.round(+new Date()/1000);
+      call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
+    }
+
+    if ( !as_tools.makeNewCall(req.body, call_record_filename) ){
       res.statusCode = 501;
       res_message = "Server have some problems and can not handle this call now!";
       res_status = "Failed";
       logger.debug("Failed to originate call with AMI");
     }
-    else if (record_call == 'Y') {
-      to_number = req.body["to_number"];
-      connect_extn = req.body["connect_extn"];
-      var unix = Math.round(+new Date()/1000);
-      call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix + ".wav";
-    }
   }
   if (call_record_filename.length > 0) {
-    var res_record_path = RECORD_URL + call_record_filename;
+    var res_record_path = RECORD_URL + call_record_filename + ".wav";
     res.jsonp(JSON.stringify({ status: res_status, message: res_message, tripid:  res_tripid, record_path: res_record_path}));
   }
   else {
