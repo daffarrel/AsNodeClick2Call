@@ -43,7 +43,7 @@ app.post('/click2call', function(req, res){
   var res_message = "Your request will be processed now!";
   var res_status = "Success";
   var res_tripid = req.body["tripid"];
-  var res_record_path = "";
+  var call_record_filename = "";
 
   // data init
   var to_number = "";
@@ -85,11 +85,11 @@ app.post('/click2call', function(req, res){
       to_number = req.body["to_number"];
       connect_extn = req.body["connect_extn"];
       var unix = Math.round(+new Date()/1000);
-      res_record_path = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
+      call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
     }
   }
   if (res_record_path.length > 0) {
-    res_record_path = RECORD_URL + res_record_path + ".wav";
+    var res_record_path = RECORD_URL + call_record_filename;
     res.jsonp(JSON.stringify({ status: res_status, message: res_message, tripid:  res_tripid, record_path: res_record_path}));
   }
   else {
