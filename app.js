@@ -10,6 +10,7 @@ var server = http.createServer(app);
 var as_tools = require('./astools.js');
 var logger = require('log4js').getLogger('App.main');
 
+var RECORD_URL = "/var/spool/asterisk/monitor/";
 var SECRET_KEY = "dfalkehasdhf2349238dfskhfk2";
 var PORT = 3000;
 server.listen(PORT);
@@ -41,6 +42,8 @@ app.post('/click2call', function(req, res){
   res.statusCode = 200;
   var res_message = "Your request will be processed now!";
   var res_status = "Success";
+  var res_tripid = req.body["tripid"];
+  var res_record_path = "";
 
   // data init
   var to_number = "";
@@ -71,15 +74,27 @@ app.post('/click2call', function(req, res){
     res_status = "Error";
   }
   else{
-   if ( !as_tools.makeNewCall(req.body) ){
-     res.statusCode = 501;
-     res_message = "Server have some problems and can not handle this call now!";
-     res_status = "Failed";
-     logger.debug("Failed to originate call with AMI");
+    record_call = req.body["record_call"];
+    if ( !as_tools.makeNewCall(req.body) ){
+      res.statusCode = 501;
+      res_message = "Server have some problems and can not handle this call now!";
+      res_status = "Failed";
+      logger.debug("Failed to originate call with AMI");
+    }
+    else if (record_call == 'Y') {
+      to_number = req.body["to_number"];
+      connect_extn = req.body["connect_extn"];
+      var unix = Math.round(+new Date()/1000);
+      res_record_path = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
     }
   }
-
-  res.jsonp(JSON.stringify({ status: res_status, message: res_message }));
+  if (res_record_path.length > 0) {
+    res_record_path = RECORD_URL + res_record_path + ".wav";
+    res.jsonp(JSON.stringify({ status: res_status, message: res_message, tripid:  res_tripid, record_path: res_record_path}));
+  }
+  else {
+    res.jsonp(JSON.stringify({ status: res_status, message: res_message, tripid:  res_tripid}));
+  }
   res.end();
 });
 

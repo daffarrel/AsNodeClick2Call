@@ -101,7 +101,7 @@ function mohSetup(filename, text) {
 TEST: curl --header "X-API-KEY: dfalkehasdhf2349238dfskhfk2" -d "to_number=84979820611&connect_extn=84987332282&record_call=N&message=how are you today&tripid=10" http://216.14.95.50:3000/click2call
 curl -d "to_number=84979820611&connect_extn=84987332282&record_call=N&message=how are you today&tripid=10" http://65.60.43.99:3000/click2call
 */
-function asCallOriginate(data) {
+function asCallOriginate(data, record_filename = '') {
   var to_number = data["to_number"];
   var connect_extn = data["connect_extn"];
   var record_call = data["record_call"];
@@ -130,6 +130,7 @@ function asCallOriginate(data) {
     'TO-NUMBER': to_number,
     'CONNECT-EXT': connect_extn ,
     'CALL-RECORD':record_call,
+    'RECORD-NAME': record_filename,
     'MOHCUSTOM': filename,
     'DIALOPTIONS': calloptions,
     'TRIPID': tripid
