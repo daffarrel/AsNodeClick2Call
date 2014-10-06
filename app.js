@@ -88,7 +88,7 @@ app.post('/click2call', function(req, res){
       call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
     }
   }
-  if (res_record_path.length > 0) {
+  if (call_record_filename.length > 0) {
     var res_record_path = RECORD_URL + call_record_filename;
     res.jsonp(JSON.stringify({ status: res_status, message: res_message, tripid:  res_tripid, record_path: res_record_path}));
   }
