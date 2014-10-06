@@ -85,7 +85,7 @@ app.post('/click2call', function(req, res){
       to_number = req.body["to_number"];
       connect_extn = req.body["connect_extn"];
       var unix = Math.round(+new Date()/1000);
-      call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix;
+      call_record_filename = "click2call_record" + "_" + to_number + "_" + connect_extn + "_" + unix + ".wav";
     }
   }
   if (call_record_filename.length > 0) {
