@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/local/bin/php
 <?php
 /*------------------------------------------------------------------------------
 	MOVEIVR AGI Script
@@ -9,8 +9,8 @@
 /*
  * Including the Asterisk Manager library
  */
-require "moveivr/AsteriskManager.php";
-require "moveivr/db.class.php";
+//require "moveivr/AsteriskManager.php";
+//require "moveivr/db.class.php";
 require "moveivr/astlib.class.php";
 
 define("DEBUG", true);
@@ -573,7 +573,8 @@ function Main($ast, $db, $argv){
 ----------------------------------------------------------*/
 // Application init here
 $ast = new AGI();
-$db = new DB();
+//$db = new DB();
+$db = None;
 Main($ast, $db, $argv);
 
 ?>
