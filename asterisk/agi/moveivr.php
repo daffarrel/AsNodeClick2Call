@@ -448,22 +448,36 @@ function whereIsMyRide($ast){
 	if (DEBUG)
 		$ast->verbose("whereIsMyRide() Start");
 
+    $callUID = $ast->get_variable("UNIQUEID");
   	$authPhone = $ast->get_variable("AUTH-PHONE");
   	$authPin = $ast->get_variable("AUTH-PIN");
   	$calleridNum = $ast->get_variable("CALLERID(num)");
 
+    $ast->set_variable("VEHICLE", "N");  
+
   	$requestUrl = WHERE_IS_MY_RIDE_URL . "?phone=$authPhone&code=$authPin&callerid=$calleridNum";
     $responseData = getAPICaller($ast, $requestUrl);
+    $message = '';
 
     // check if request success to server
     if ($responseData->status == "OK"){
     	// Playback: Your vehicle will arrive at <Pickup_Address> at <ETA>
+      $Pickup_Address = $responseData->result[0]->Pickup_Address;;
+      $Pickup_Time = $responseData->result[0]->PickupTime;;
+      $message = "Your vehicle will arrive at $Pickup_Address at $Pickup_Time .";
     }
     else {
     	$message = $responseData->message;
-    	$ast->exec("Festival", "$message");
+    	// $ast->exec("Festival", "$message");
     }
-    
+
+    if (strlen($message) > 0) {
+      $filename = "WhereMyRide-" . $callUID;
+      text2speech($filename, $message);
+      $ast->set_variable("WHERE-MYRIDE-RESPONSE-AUDIO", "$filename");   
+      $ast->set_variable("VEHICLE", "Y");   
+    }
+
 	if (DEBUG)
 		$ast->verbose("whereIsMyRide() Stopped");
 }
