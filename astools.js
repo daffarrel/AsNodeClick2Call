@@ -138,6 +138,7 @@ function asCallOriginate(data, record_filename) {
     'MOHCUSTOM': filename,
     'DIALOPTIONS': calloptions,
     'CALL-TYPE': extn_type,
+    'AUDIO-FILE': "/tmp/" + filename + "/" + filename,
     'TRIPID': tripid
   };
   standardSend(action);
