@@ -104,11 +104,15 @@ curl -d "to_number=84979820611&connect_extn=84987332282&record_call=N&message=ho
 function asCallOriginate(data, record_filename) {
   var to_number = data["to_number"];
   var connect_extn = data["connect_extn"];
+  var extn_type = 'LOCAL';
   var record_call = data["record_call"];
   var message = data["message"];
   var tripid = data["tripid"];
   var calloptions = "g";
   var filename = '';
+
+  if (data["extn_type"])
+    extn_type = data["extn_type"];
 
   if (message.length > 0) {
     //message = message.replace(new RegExp(',', 'g'), ' ');
@@ -133,6 +137,7 @@ function asCallOriginate(data, record_filename) {
     'RECORD-NAME': record_filename,
     'MOHCUSTOM': filename,
     'DIALOPTIONS': calloptions,
+    'CALL-TYPE': extn_type,
     'TRIPID': tripid
   };
   standardSend(action);
