@@ -100,9 +100,6 @@ function userAuthentication($ast, $authInput){
   else
     $ast->set_variable("AUTH-VALID", "N");
 
-	// for now always set valid authen data to Yes
-	$ast->set_variable("AUTH-VALID", "Y");
-
 	if (DEBUG)
 		$ast->verbose("userAuthentication() Stop");
 }
