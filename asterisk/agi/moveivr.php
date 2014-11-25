@@ -85,8 +85,20 @@ function userAuthentication($ast, $authInput){
 		$ast->verbose("userAuthentication() Start");
 
 	// parsing from user input
-	$ast->set_variable("AUTH-PHONE", substr($authInput, 0, 10));
-	$ast->set_variable("AUTH-PIN", substr($authInput, -4));	
+  $authPhone = substr($authInput, 0, 10);
+  $authPin = substr($authInput, -4);
+	$ast->set_variable("AUTH-PHONE", $authPhone);
+	$ast->set_variable("AUTH-PIN", $authPin);	
+  $calleridNum = $ast->get_variable("CALLERID(num)");
+
+  $requestUrl = TRIP_REVIEW_LIST_URL . "?phone=$authPhone&code=$authPin&callerid=$calleridNum";
+  $responseData = getAPICaller($ast, $requestUrl);
+  $status = $responseData->status;
+  // check if request success to server
+  if ($status == "OK")
+    $ast->set_variable("AUTH-VALID", "Y");
+  else
+    $ast->set_variable("AUTH-VALID", "N");
 
 	// for now always set valid authen data to Yes
 	$ast->set_variable("AUTH-VALID", "Y");
