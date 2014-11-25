@@ -119,7 +119,8 @@ function asCallOriginate(data, record_filename) {
     var unix = Math.round(+new Date()/1000);
     filename = "click2calmoh_" + to_number + "_" + connect_extn + "_" + unix;
     mohSetup(filename, message);
-    calloptions += "m";
+    // for now dont use MOH
+    //calloptions += "m";
   }
 
   logger.info("New call to " + to_number + " from " + connect_extn + " call_record " + record_call);
