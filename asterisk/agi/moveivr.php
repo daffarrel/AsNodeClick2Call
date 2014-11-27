@@ -137,6 +137,8 @@ function getTripReviewList($ast){
   	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date"
   	         . " provided by $Vendor.  $Vendor will pick you at $PickupTime  for you appointment at $DropOffTime. ";
 
+  if (DEBUG)
+    $ast->verbose("$text");
     /*
 		$order   = array(",", ";");
   	$replace = '';
