@@ -44,7 +44,7 @@ function text2speech($filename, $text) {
 
 // convert text to speech 
 function text2speech_beta($ast, $filename, $text) {
-  $cmd = '/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 "'.$text.'"';
+  $cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 ". '"' . $text . '"';
   if (DEBUG)
     $ast->verbose("text2speech_beta cmd: $cmd");
   exec($cmd);
