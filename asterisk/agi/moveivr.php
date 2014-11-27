@@ -43,14 +43,6 @@ function text2speech($filename, $text) {
 	exec($cmd);
 }
 
-// convert text to speech 
-function text2speech_beta($ast, $filename, $text) {
-  $cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 ". '"' . $text . '"';
-  if (DEBUG)
-    $ast->verbose("text2speech_beta cmd: $cmd");
-  exec($cmd);
-}
-
 // setup moh for current channel
 function mohSetup($ast, $db, $filename, $text) {
   $folder = "/tmp/$filename";
@@ -146,8 +138,8 @@ function getTripReviewList($ast){
   	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date"
   	         . " provided by $Vendor.  $Vendor will pick you at $PickupTime  for you appointment at $DropOffTime. ";
 
-  if (DEBUG)
-    $ast->verbose("$text");
+  //if (DEBUG)
+  //  $ast->verbose("$text");
     /*
 		$order   = array(",", ";");
   	$replace = '';
@@ -166,7 +158,7 @@ function getTripReviewList($ast){
     $trip_list_text = "You have no trip to review at this time!";
 
   $filename = "TripReviewList-" . $callUID;
-  text2speech_beta($ast, $filename, $trip_list_text);
+  text2speech($ast, $filename, $trip_list_text);
   $ast->set_variable("TRIP-REVIEW-LIST-AUDIO", "$filename");
   $ast->set_variable("TOTAL-REVIEW-TRIP", "$totalTrip");  
 
