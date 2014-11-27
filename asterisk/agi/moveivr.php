@@ -158,7 +158,7 @@ function getTripReviewList($ast){
     $trip_list_text = "You have no trip to review at this time!";
 
   $filename = "TripReviewList-" . $callUID;
-  text2speech($ast, $filename, $trip_list_text);
+  text2speech($filename, $trip_list_text);
   $ast->set_variable("TRIP-REVIEW-LIST-AUDIO", "$filename");
   $ast->set_variable("TOTAL-REVIEW-TRIP", "$totalTrip");  
 
