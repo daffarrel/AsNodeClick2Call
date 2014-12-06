@@ -52,6 +52,35 @@ function mohSetup($ast, $db, $filename, $text) {
   newMOHClass($ast, $db, $filename, $folder);
 }
 
+
+// format time function
+// "PickupTime":960
+// This should be announced as "will pick you at <break strength='strong'/> four <break strength='strong'/> P.M."
+// or. "PickupTime":980
+// Should be announced as "will pick you at <break strength='strong'/> four <break strength='strong'/> twenty <break strength='strong'/> P.M."
+function time2text($ast, $pickupTime) {
+  $ast->verbose("time2text for: " . $pickupTime);
+  $pickupText = "will pick you at <break strength='strong'/>";
+
+  $divTime = (int)$pickupTime / 16;
+  $divTimeRound = round($divTime, 0, PHP_ROUND_HALF_DOWN);
+  $minute = ($divTime - $divTimeRound)*60;
+
+  if ($minute > 0)
+    $pickupText .= " $divTimeRound <break strength='strong'/> $minute <break strength='strong'/>";
+  else
+    $pickupText .= " $divTimeRound <break strength='strong'/>";
+
+  if ($divTimeRound < 12)
+    $pickupText .= " A.M.";
+  else
+    $pickupText .= " P.M.";
+
+  $ast->verbose("Time pickup text: " . $pickupText);
+  return $pickupText;
+}
+
+
 // excu API GET request to server and parse JSON data response
 function getAPICaller($ast, $url) {
 
