@@ -60,7 +60,7 @@ function mohSetup($ast, $db, $filename, $text) {
 // Should be announced as "will pick you at <break strength='strong'/> four <break strength='strong'/> twenty <break strength='strong'/> P.M."
 function time2text($ast, $pickupTime) {
   $ast->verbose("time2text for: " . $pickupTime);
-  $pickupText = "will pick you at <break strength='strong'/>";
+  $pickupText = "<break strength='strong'/>";
 
   $divTime = (int)$pickupTime / 16;
   $divTimeRound = round($divTime, 0, PHP_ROUND_HALF_DOWN);
@@ -164,8 +164,10 @@ function getTripReviewList($ast){
   	$PickupTime = $trip->PickupTime;
   	$DropOffTime = $trip->DropOffTime;
 
+    $PickupTimeText = time2text($PickupTime);
+
   	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date"
-  	         . " provided by $Vendor.  $Vendor will pick you at $PickupTime  for you appointment at $DropOffTime. ";
+  	         . " provided by $Vendor.  $Vendor will pick you at $PickupTimeText for you appointment at $DropOffTime. ";
 
   //if (DEBUG)
   //  $ast->verbose("$text");
@@ -224,8 +226,9 @@ function getTripCancelList($ast){
   	$Travel_Date = $trip->Travel_Date;
   	$Vendor = $trip->Vendor;
   	$PickupTime = $trip->PickupTime;
+    $PickupTimeText = time2text($PickupTime);
 
-    $tripData = "trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date provided by $Vendor at $PickupTime.";
+    $tripData = "trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date provided by $Vendor at $PickupTimeText.";
   	$text = "Press $count_trip to cancel " . $tripData;
   	
   	$trip_list_text = $trip_list_text . $text;
