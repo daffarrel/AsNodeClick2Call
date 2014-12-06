@@ -62,14 +62,19 @@ function time2text($ast, $pickupTime) {
   $ast->verbose("time2text for: " . $pickupTime);
   $pickupText = "<break strength='strong'/>";
 
-  $divTime = (int)$pickupTime / 16;
+  $divTime = (int)$pickupTime / 60;
   $divTimeRound = round($divTime, 0, PHP_ROUND_HALF_DOWN);
-  $minute = ($divTime - $divTimeRound)*60;
+  $minute = (int)$pickupTime - $divTimeRound*60;
+
+  if ($divTimeRound > 12)
+    $toPickTime = $divTimeRound - 12;
+  else
+    $toPickTime = $divTimeRound;
 
   if ($minute > 0)
-    $pickupText .= " $divTimeRound <break strength='strong'/> $minute <break strength='strong'/>";
+    $pickupText .= " $toPickTime <break strength='strong'/> $minute <break strength='strong'/>";
   else
-    $pickupText .= " $divTimeRound <break strength='strong'/>";
+    $pickupText .= " $toPickTime <break strength='strong'/>";
 
   if ($divTimeRound < 12)
     $pickupText .= " A.M.";
@@ -164,7 +169,7 @@ function getTripReviewList($ast){
   	$PickupTime = $trip->PickupTime;
   	$DropOffTime = $trip->DropOffTime;
 
-    $PickupTimeText = time2text($PickupTime);
+    $PickupTimeText = time2text($ast, (int)$PickupTime);
 
   	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date"
   	         . " provided by $Vendor.  $Vendor will pick you at $PickupTimeText for you appointment at $DropOffTime. ";
@@ -226,7 +231,7 @@ function getTripCancelList($ast){
   	$Travel_Date = $trip->Travel_Date;
   	$Vendor = $trip->Vendor;
   	$PickupTime = $trip->PickupTime;
-    $PickupTimeText = time2text($PickupTime);
+    $PickupTimeText = time2text($ast, (int)$PickupTime);
 
     $tripData = "trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date provided by $Vendor at $PickupTimeText.";
   	$text = "Press $count_trip to cancel " . $tripData;
