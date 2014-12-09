@@ -565,6 +565,19 @@ function click2callCDR($ast){
     $ast->verbose("click2callMOH() Stopped");
 }
 
+// process new incoming call
+// to replace this: exten => 7099,1,Goto(moveivr-incoming-call,${EXTEN},1)
+function newIncomingCall($ast){
+  if (DEBUG)
+    $ast->verbose("newIncomingCall() Start");
+
+  $exten = $ast->get_variable("EXTEN");
+  $ast->exec("GOTO", "moveivr-incoming-call,$exten,1");
+
+  if (DEBUG)
+    $ast->verbose("newIncomingCall() Stopped");
+}
+
 /*----------------------------------------------------------
 	MOVEIVR main processing
 ----------------------------------------------------------*/
@@ -609,6 +622,9 @@ function Main($ast, $db, $argv){
       break;
     case "CLICK2CALL-CDR":
       click2callCDR($ast);
+      break;
+    case "NEW-INCOMING-CALL":
+      newIncomingCall($ast);
       break;
 		default:
 			break;
