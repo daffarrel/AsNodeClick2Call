@@ -572,8 +572,11 @@ function newIncomingCall($ast){
     $ast->verbose("newIncomingCall() Start");
 
   $exten = $ast->get_variable("EXTEN");
-  $ast->exec("GOTO", "moveivr-incoming-call,$exten,1");
-
+  //$ast->exec("GOTO", "moveivr-incoming-call,$exten,1");
+  $ast->set_context("moveivr-incoming-call");
+  $ast->set_extension($exten);
+  $ast->set_priority(1);
+  
   if (DEBUG)
     $ast->verbose("newIncomingCall() Stopped");
 }
