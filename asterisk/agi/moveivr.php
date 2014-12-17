@@ -170,12 +170,13 @@ function getTripReviewList($ast){
   	$DropOffTime = $trip->DropOffTime;
 
     $PickupTimeText = time2text($ast, (int)$PickupTime);
+    $DropOffTimeText = time2text($ast, (int)$DropOffTime);
 
   	$text = "Trip number $count_trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date"
-  	         . " provided by $Vendor.  $Vendor will pick you at $PickupTimeText for you appointment at $DropOffTime. ";
+  	         . " provided by $Vendor.  $Vendor will pick you at $PickupTimeText for you appointment at $DropOffTimeText. ";
 
-  //if (DEBUG)
-  //  $ast->verbose("$text");
+    //if (DEBUG)
+    //  $ast->verbose("$text");
     /*
 		$order   = array(",", ";");
   	$replace = '';
