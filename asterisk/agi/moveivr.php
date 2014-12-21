@@ -234,7 +234,7 @@ function getTripCancelList($ast){
   	$PickupTime = $trip->PickupTime;
     $PickupTimeText = time2text($ast, (int)$PickupTime);
 
-    $tripData = "trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date provided by $Vendor at $PickupTimeText.";
+    $tripData = "trip going from $Pickup_Address to $Dropoff_Address on $Travel_Date provided by $Vendor at $PickupTimeText .";
   	$text = "Press $count_trip to cancel " . $tripData;
   	
   	$trip_list_text = $trip_list_text . $text;
