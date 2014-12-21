@@ -425,7 +425,7 @@ function carpoolRenewalConfirm($ast) {
     $ast->verbose("carpoolRenewalConfirm() Start");
 
   $callUID = $ast->get_variable("UNIQUEID");
-  $userChoice = $ast->get_variable("USERCHOICE");
+  //$userChoice = $ast->get_variable("USERCHOICE");
   $carpoolId = $ast->get_variable("CARPOOL".$userChoice);
   $carpoolData = $ast->get_variable("CARPOOL-DATA".$userChoice);
   $carpoolToken = $ast->get_variable("CARPOOL-TOKEN".$userChoice);
@@ -441,7 +441,7 @@ function carpoolRenewalConfirm($ast) {
   $ast->set_variable("CARPOOLID", "$carpoolId");
   $ast->set_variable("CARPOOLDATA", "$carpoolData");
   $ast->set_variable("CARPOOLTOKEN", "$carpoolToken");
-  $ast->set_variable("CARPOOLDURATION", "$userChoice");
+  //$ast->set_variable("CARPOOLDURATION", "$userChoice");
 
   if (DEBUG)
     $ast->verbose("carpoolRenewalConfirm() done.");
