@@ -77,9 +77,9 @@ function time2text($ast, $pickupTime) {
     $pickupText .= " $toPickTime <break strength='strong'/>";
 
   if ($divTimeRound < 12)
-    $pickupText .= " A.M.";
+    $pickupText .= " AM";
   else
-    $pickupText .= " P.M.";
+    $pickupText .= " PM";
 
   $ast->verbose("Time pickup text: " . $pickupText);
   return $pickupText;
@@ -512,9 +512,10 @@ function whereIsMyRide($ast){
     // check if request success to server
     if ($responseData->status == "OK"){
     	// Playback: Your vehicle will arrive at <Pickup_Address> at <ETA>
-      $Pickup_Address = $responseData->result[0]->Pickup_Address;;
-      $Pickup_Time = $responseData->result[0]->PickupTime;;
-      $message = "Your vehicle will arrive at $Pickup_Address at $Pickup_Time .";
+      $PickupAddress = $responseData->result[0]->Pickup_Address;;
+      $PickupTime = $responseData->result[0]->PickupTime;;
+      $PickupTimeText = time2text($ast, (int)$PickupTime);
+      $message = "Your vehicle will arrive at $PickupAddress at $PickupTimeText .";
     }
     else {
     	$message = $responseData->message;
