@@ -388,7 +388,7 @@ function getCarpoolRenewalList($ast){
     $EndDate = $carpool->EndDate;
     $token = $carpool->Token;
 
-    $carpoolData = "carpool going from $Pickup_Address to $Dropoff_Address going on $DaysOfWeek ending on $EndDate.";
+    $carpoolData = "carpool going from $Pickup_Address to $Dropoff_Address going on $DaysOfWeek ending on $EndDate ";
     $text = "Press $count_item to renew " . $carpoolData;
     
     $carpool_list_text .= $text;
@@ -425,7 +425,7 @@ function carpoolRenewalConfirm($ast) {
     $ast->verbose("carpoolRenewalConfirm() Start");
 
   $callUID = $ast->get_variable("UNIQUEID");
-  //$userChoice = $ast->get_variable("USERCHOICE");
+  $userChoice = $ast->get_variable("USERCHOICE");
   $carpoolId = $ast->get_variable("CARPOOL".$userChoice);
   $carpoolData = $ast->get_variable("CARPOOL-DATA".$userChoice);
   $carpoolToken = $ast->get_variable("CARPOOL-TOKEN".$userChoice);
