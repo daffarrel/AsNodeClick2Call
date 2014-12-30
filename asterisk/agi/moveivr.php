@@ -59,7 +59,7 @@ function mohSetup($ast, $db, $filename, $text) {
 // or. "PickupTime":980
 // Should be announced as "will pick you at <break strength='strong'/> four <break strength='strong'/> twenty <break strength='strong'/> P.M."
 function time2text($ast, $pickupTime) {
-  $ast->verbose("time2text for: " . $pickupTime);
+  //$ast->verbose("time2text for: " . $pickupTime);
   $pickupText = "<break strength='strong'/>";
 
   $divTime = (int)$pickupTime / 60;
@@ -81,7 +81,7 @@ function time2text($ast, $pickupTime) {
   else
     $pickupText .= " PM";
 
-  $ast->verbose("Time pickup text: " . $pickupText);
+  //$ast->verbose("Time pickup text: " . $pickupText);
   return $pickupText;
 }
 
