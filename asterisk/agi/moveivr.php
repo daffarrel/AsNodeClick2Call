@@ -202,6 +202,8 @@ function getTripReviewList($ast){
   if ($totalTrip == 0)
     $trip_list_text = "You have no trip to review at this time!";
 
+  $ast->verbose("getTripReviewList() $trip_list_text");
+  
   $filename = "TripReviewList-" . $callUID;
   $ast->set_variable("TRIP-REVIEW-LIST-AUDIO", "$filename");
   $ast->set_variable("TOTAL-REVIEW-TRIP", "$totalTrip");  
