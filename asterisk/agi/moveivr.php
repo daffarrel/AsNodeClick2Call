@@ -54,7 +54,8 @@ function mohSetup($ast, $db, $filename, $text) {
   $folder = "/tmp/$filename";
   exec("mkdir $folder");
   $cmd = "/usr/local/bin/swift  -o $folder/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
-  exec($cmd);
+  //exec($cmd);
+  system($cmd);
   newMOHClass($ast, $db, $filename, $folder);
 }
 
