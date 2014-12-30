@@ -43,8 +43,9 @@ function text2speech($filename, $text) {
   //$cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
   $cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 ". '"' . $text . '"';
   //exec($cmd);
-  //passthru($cmd . " 2>&1 &");
-  system($cmd);
+  passthru($cmd . " >> /var/log/mart_log.txt 2>&1 &");
+  sleep(3);
+  //system($cmd);
   $endtime = microtime(true);
   $time_taken = $endtime-$starttime;
   return $time_taken;
