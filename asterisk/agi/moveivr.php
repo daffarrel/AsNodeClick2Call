@@ -38,9 +38,15 @@ function newMOHClass($ast, $db, $class, $folder)
 
 // convert text to speech 
 function text2speech($filename, $text) {
-	//$cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
+  $starttime = microtime(true);
+
+  //$cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 '".$text."'";
   $cmd = "/usr/local/bin/swift  -o /tmp/$filename.wav -p audio/channels=1,audio/sampling-rate=8000 ". '"' . $text . '"';
-	exec($cmd);
+  exec($cmd);
+
+  $endtime = microtime(true);
+  $time_taken = $endtime-$starttime;
+  return $time_taken;
 }
 
 // setup moh for current channel
@@ -194,11 +200,11 @@ function getTripReviewList($ast){
   if ($totalTrip == 0)
     $trip_list_text = "You have no trip to review at this time!";
 
-  $ast->verbose("getTripReviewList() text ready!");
   $filename = "TripReviewList-" . $callUID;
   $ast->set_variable("TRIP-REVIEW-LIST-AUDIO", "$filename");
   $ast->set_variable("TOTAL-REVIEW-TRIP", "$totalTrip");  
-  text2speech($filename, $trip_list_text);
+  $time_taken = text2speech($filename, $trip_list_text);
+  $ast->verbose("getTripReviewList() time taken: $time_taken");
 
 	if (DEBUG)
 		$ast->verbose("getTripReviewList() Stopped with $totalTrip trips to review.");
